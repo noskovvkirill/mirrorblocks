@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
         "outDir": "./dist",
-        "module": "commonjs",
+        "module": "ESNext",
         "strict": true,
-        "target": "ESNEXT",
+        "target": "ESNext",
         "lib": [
             "es6",
             "dom",
@@ -25,7 +25,7 @@
         "skipLibCheck": true
     },
     "include": [
-        "src"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",
