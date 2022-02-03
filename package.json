@@ -1,6 +1,6 @@
 {
   "name": "mirrorblocks",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Mirror.xyz components to render web3 blocks",
   "main": "dist/index.js",
   "module": "dist/index.es.js",

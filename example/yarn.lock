@@ -1305,10 +1305,10 @@ minimist@^1.2.0:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
-mirrorblocks@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/mirrorblocks/-/mirrorblocks-0.0.13.tgz#a924c010940d2b0ecda477dee2e7b6f55042e7b1"
-  integrity sha512-G0yUbYMTEADJNQq/MD8kT0ceRLbJrCSVqXID2GUsz/+lLQXOqKsMHX48bqwiq0kRjx+wQ6lyFN5l6McdNLsYzg==
+mirrorblocks@^0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/mirrorblocks/-/mirrorblocks-0.0.16.tgz#b23fada169d1174eed62a89f9968b91331fbdc8b"
+  integrity sha512-uinu62IANqwKrZ2Fb0YMhZUwWZZcSg4DPG/6F2WPRnz1gJF6Y7r0lbnX/22+brxJQ0NhXr/OB0xUpMJqn1ZSdA==
   dependencies:
     "@rollup/plugin-node-resolve" "^13.1.3"
     degen "^0.0.57"

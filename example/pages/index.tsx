@@ -4,7 +4,7 @@ import { Crowdfund, Entry, Edition, EntryEdition, Poll } from 'mirrorblocks'
 import { Stack, Box, Text } from 'degen'
 import { useState, useEffect } from 'react'
 import useScrollPosition from '@react-hook/window-scroll'
-import { text } from 'stream/consumers'
+
 
 const Home: NextPage = () => {
 
