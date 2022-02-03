@@ -16,16 +16,17 @@ Renders:
 ### Usage 
 ___
 
-1. Install mirrorblocks
+1. Install mirrorblocks & [Mirror Degen](https://github.com/mirror-xyz/degen). 
 ```
-npm install mirrorblocks 
+npm install mirrorblocks degen
 ```
 ```
-yarn add mirrorblocks 
+yarn add mirrorblocks degen
 ```
-2. Wrap your app with the ThemeProvider. It works for [Mirror Degen](https://github.com/mirror-xyz/degen) too. 
+2. Wrap your app with the ThemeProvider and import styles. It works for [Mirror Degen](https://github.com/mirror-xyz/degen) too. 
 ```
 import { ThemeProvider } from 'mirrorblocks'
+import 'degen/styles';
 
 const App = () => (
     <ThemeProvider>
