@@ -1,11 +1,15 @@
 {
   "name": "mirrorblocks",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Mirror.xyz components to render web3 blocks",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "author": "Kirill Noskov",
   "license": "MIT",
+  "files": [
+    "dist",
+    "src"
+  ],
   "devDependencies": {
     "@babel/core": "^7.16.12",
     "@babel/preset-react": "^7.16.7",
