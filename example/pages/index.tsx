@@ -1,9 +1,40 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { Crowdfund, Entry, Edition, EntryEdition, Poll } from 'mirrorblocks'
-import { Stack, Box, Heading } from 'degen'
+import { Stack, Box, Text } from 'degen'
+import { useState, useEffect } from 'react'
+import useScrollPosition from '@react-hook/window-scroll'
+import { text } from 'stream/consumers'
 
 const Home: NextPage = () => {
+
+  const [isStale, setIsStale] = useState(false)
+  const [scrollDir, setScrollDir] = useState<'top' | 'bottom' | 'stale'>('stale')
+  const scrollY = useScrollPosition(10) //framerate scroll check
+  const [prevScroll, setPrevScroll] = useState(0)
+
+
+  useEffect(() => {
+    const currentScroll = scrollY
+    if (currentScroll >= Math.floor(window.innerHeight / 3) && scrollDir === 'bottom') {
+      setIsStale(false)
+    }
+    if (currentScroll <= 10) {
+      setIsStale(true)
+    }
+    if ((prevScroll - currentScroll) > 150 && scrollDir !== 'top') {
+      setScrollDir('top')
+    }
+    if ((prevScroll - currentScroll) > 150 && scrollDir === 'top') {
+      setIsStale(true)
+    }
+    if ((currentScroll - prevScroll) > 70 && scrollDir !== 'bottom') {
+      setScrollDir('bottom')
+    }
+    setPrevScroll(scrollY)
+
+  }, [scrollY])
+
   return (
     <div>
       <Head>
@@ -12,60 +43,131 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <Box as='header'
+        display='flex'
+        flexDirection={'row'}
+        alignItems={'baseline'}
+        justifyContent='space-between'
+        style={{ 'mixBlendMode': 'difference' }}
+        paddingY={"12"} paddingX={"6"} zIndex={'10'} position={'sticky'} left={"0"} top={"0"}>
+        <Text
+          weight={'bold'}
+          size={'headingTwo'}
+          color={'accent'}>
+          Mirror Components
+        </Text>
+        <Stack direction={'horizontal'}>
+          <a href='https://github.com/noskovvkirill/mirrorblocks' target='_blank'>
+            <Text
+              weight={'bold'}
+              size={'base'}
+              color={{ hover: 'text', base: 'textTertiary' }}
+            >
+              Github
+            </Text>
+          </a>
+          <a href='https://mirrorfeed.xyz' target='_blank'>
+            <Text
+              weight={'bold'}
+              size={'base'}
+              color={{ hover: 'text', base: 'textTertiary' }}>
+              Mirrorfeed
+            </Text>
+          </a>
+        </Stack>
+      </Box>
+
       <main style={{ width: "100%" }}>
-        <Box width="full" padding="12"><Heading>Mirror Components</Heading></Box>
-        <Box width="full" overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingY="8" paddingX="12">
-          <Stack direction={"horizontal"} flex={1} justify={'flex-start'}>
-            <Poll digest={"18"} />
-            <Crowdfund maxWidth={"64"} address={"0x18f623e397EF28F1A5a094840f7F6f5587828b94"} />
+        {/* 
+        <TokenDrops
+          projectAddress={'0xcc7d0a05c3c07bb83683bbe374399ed8bc2a147e#code'}
+        /> */}
+
+        <Box width="full" overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingY="8"
+          paddingX={{ sm: "8", xs: "8", md: "12", lg: "12" }}
+        >
+          <Stack
+            direction={{ sm: 'vertical', xs: "vertical", md: "horizontal" }} flex={1} justify={'flex-start'}>
+            <Poll
+              digest={'U91KFBfSmWCjJar4-tflQBSQK1H0IVTOMheSPrHvU0Q'}
+              id={"18"}
+            />
+            <Crowdfund maxWidth={"full"} address={"0x9500b696F00AE82CA97d06379CF0A2b60B467040"} />
           </Stack>
         </Box>
 
-        <Box width="full" overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingY="8" paddingX="12">
-          <Stack direction={"horizontal"} flex={1} justify={'flex-start'}>
+        <Box width="full"
+          overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingY="8"
+          paddingX={{ sm: "8", xs: "8", md: "12", lg: "12" }}
+        >
+          <Stack
+            direction={{ sm: 'vertical', xs: "vertical", md: "horizontal" }} flex={1} justify={'flex-start'}>
             <Edition
               contract={'0xDF5b5ee15CC96ba7d0CB6BD9b2c0fc4417ab6445'}
               id={453}
-              maxWidth={'24rem'}
+              maxWidth={{ xs: 'full', md: 'full', lg: '96' }}
             />
             <EntryEdition digest={"sfgXhqtwwMkhHLnAM1jVr16MdSJ4RGSb1Y6CAKpslgc"} />
             <Edition
               contract={'0xDF5b5ee15CC96ba7d0CB6BD9b2c0fc4417ab6445'}
               id={3347}
-              maxWidth={'24rem'}
+              maxWidth={{ xs: 'full', md: 'full', lg: '96' }}
             />
-
-
-            {/* <Edition
-              contract={'0xDF5b5ee15CC96ba7d0CB6BD9b2c0fc4417ab6445'}
-              id={453}
-            /> */}
-
           </Stack>
         </Box>
 
 
-        <Box width="full" overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingY="8" paddingX="12">
-          <Stack direction={"horizontal"} flex={1} justify={'flex-start'}>
+        <Box width="full" overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingY="8"
+          paddingX={{ sm: "8", xs: "8", md: "12", lg: "12" }}
+        >
+          <Stack
+            wrap={{ sm: true, md: false }}
+            direction={{ sm: 'vertical', xs: "vertical", md: "horizontal" }} flex={1} justify={'flex-start'}>
             <Entry digest={"tpnfq3A2rU32jVLXcHhuHc02WQ8sNm3saWvqaooerTI"} />
             <Crowdfund address={"0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080"} />
             <Entry digest={"zRJ95xu0fol5Fi5Pn-vre38VYZ6nNvsYsGvBmMOSd40"} />
           </Stack>
         </Box>
 
-        <Box width="full" overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingY="8" paddingX="12">
-          <Stack direction={"horizontal"} flex={1} justify={'flex-start'}>
-            <Crowdfund address={"0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080"} />
-            <Crowdfund address={"0x18f623e397EF28F1A5a094840f7F6f5587828b94"} />
-            <Entry digest={"UwQwplCMEe1T5eUkp0CpTDJjZXvAK3eeakskTaQe3pE"} />
-            <Crowdfund address={"0xC2e0B35582fCB19d4783738F305BCc38F53c6Ca0"} />
+        <Box width="full" overflow={"hidden"} style={{ height: "fit-content" }} backgroundColor={"backgroundSecondary"} paddingTop="8"
+          paddingBottom="24"
+          paddingX={{ sm: "8", xs: "8", md: "12", lg: "12" }}
+        >
+          <Stack direction={{ xs: "vertical", sm: 'horizontal', md: "horizontal", lg: "horizontal" }}
+            wrap={{ sm: true, md: true, lg: false, xl: false }}
+            flex={1} justify={'flex-start'}>
+            <Crowdfund
+              maxWidth={'full'}
+              address={"0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080"} />
+            <Crowdfund
+              maxWidth={'full'}
+              address={"0x18f623e397EF28F1A5a094840f7F6f5587828b94"} />
+            <Entry
+              maxWidth={'full'}
+              digest={"UwQwplCMEe1T5eUkp0CpTDJjZXvAK3eeakskTaQe3pE"} />
+            <Crowdfund
+              maxWidth={'full'}
+              address={"0xC2e0B35582fCB19d4783738F305BCc38F53c6Ca0"} />
           </Stack>
         </Box>
       </main>
 
-      <footer >
+      {isStale && (
+        <Box as='footer'
+          width={'fit'}
+          borderRadius={'full'}
+          style={{ 'mixBlendMode': 'multiply', backdropFilter: 'blur(10px)' }}
+          zIndex={'10'} position={'fixed'} right={"6"} bottom={"6"}>
+          <Box
+            display={'flex'} alignItems={'center'} justifyContent={'center'}
+            width={'16'} height={"16"} aspectRatio='1/1' borderRadius={'full'} backgroundColor={'backgroundSecondary'}>
+            <Box
+              width={"6"}
+            ><svg viewBox="0 0 144 185" xmlns="http://www.w3.org/2000/svg" ><path d="M0 71.6129C0 32.0622 32.0622 0 71.6129 0C111.164 0 143.226 32.0622 143.226 71.6129V174.118C143.226 180.128 138.354 185 132.343 185H10.8824C4.87222 185 0 180.128 0 174.118V71.6129Z" fill="url(#markGradient)"></path><path clip-rule="evenodd" d="M134.717 176.111V71.8216C134.717 36.8684 106.465 8.53326 71.6129 8.53326C36.7613 8.53326 8.50846 36.8684 8.50846 71.8216V176.111C8.50846 176.308 8.66719 176.467 8.86298 176.467H134.363C134.559 176.467 134.717 176.308 134.717 176.111ZM71.6129 0C32.0622 0 0 32.1556 0 71.8216V176.111C0 181.02 3.96809 185 8.86298 185H134.363C139.258 185 143.226 181.02 143.226 176.111V71.8216C143.226 32.1556 111.164 0 71.6129 0Z" fill="var(--colors-accent)" fill-rule="evenodd"></path><defs><linearGradient gradientUnits="userSpaceOnUse" id="markGradient" x1="18.435" x2="143.747" y1="10.6666" y2="209.447"><stop offset="0.265625" stopColor="var(--colors-accent)"></stop><stop offset="0.734375" stop-color="var(--colors-background)"></stop></linearGradient></defs></svg></Box>
+          </Box>
+        </Box>
+      )}
 
-      </footer>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { render } from '../helpers/MarkdownSimpleParser'
 import { Box, Heading, Skeleton, SkeletonGroup, Stat, Tag, Text, Stack, Avatar } from 'degen'
 import AddressPrettyPrint from '../helpers/AddressPrettyPrint'
 import { getFirstImage } from '../helpers/MarkdownUtils'
+import type { BoxMaxWidth } from '../components/Root'
 
 const fetcher = (digest: string) => {
     return thunder('query')({
@@ -47,7 +48,7 @@ const fetcher = (digest: string) => {
 }
 
 
-const Entry = ({ digest, maxWidth }: { digest: string, maxWidth?: string }): JSX.Element => {
+const Entry = ({ digest, maxWidth }: { digest: string, maxWidth?: BoxMaxWidth }): JSX.Element => {
     const { data, error, isValidating } = useSWR(digest, fetcher, {
         revalidateOnFocus: false
     });
@@ -56,30 +57,35 @@ const Entry = ({ digest, maxWidth }: { digest: string, maxWidth?: string }): JSX
             <Box display="flex"
                 position={"relative"}
                 borderRadius={"3xLarge"}
-                width="full" flexDirection="column" style={{ maxWidth: "36rem" }} gap="4" backgroundColor={"background"}>
-                <a style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
-                    href={
-                        data?.entry?.publisher?.project?.domain
-                            ? 'https://' + data?.entry?.publisher?.project?.domain + '/' + digest
-                            : 'https://' + 'mirror.xyz/' + data?.entry?.publisher?.member?.ens + digest
-                    }
-                    target={"_blank"}
-                />
+                width="full" flexDirection="column"
+                gap="4" backgroundColor={"background"}>
+                {!isValidating && !error && (
+                    <a style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
+                        href={
+                            data?.entry?.publisher?.project?.domain
+                                ? 'https://' + data?.entry?.publisher?.project?.domain + '/' + digest
+                                : 'https://' + 'mirror.xyz/' + data?.entry?.publisher?.member?.ens + digest
+                        }
+                        target={"_blank"}
+                    />)}
                 <Box
                     aspectRatio="2/1"
                     overflow='hidden'
                     width="full"
-                    backgroundColor={"foregroundSecondary"}
                     borderColor={'transparent'}
                     borderTopLeftRadius="3xLarge"
                     borderTopRightRadius={"3xLarge"}
                     position={"relative"}>
                     {data?.entry?.featuredImage?.url
                         ? <img
+                            loading="lazy"
+                            alt={data?.entry?.title + 'cover image'}
                             style={{ userSelect: 'none', objectFit: 'cover', width: '100%', height: '100%' }}
                             src={data?.entry?.featuredImage?.url} />
                         : data?.entry?.body && getFirstImage(data?.entry?.body)
                             ? <img
+                                loading="lazy"
+                                alt={data?.entry?.title + 'cover image'}
                                 style={{ userSelect: 'none', objectFit: 'cover', width: '100%', height: '100%' }}
                                 src={getFirstImage(data?.entry?.body) || ''} />
                             : <Box width="full" height="full"

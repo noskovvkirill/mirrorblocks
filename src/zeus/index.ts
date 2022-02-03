@@ -45,7 +45,7 @@ export type ValueTypes = {
 	metadata?:ValueTypes["CrowdfundMetadataType"],
 	publishStatus?:boolean,
 	createdAt?:boolean,
-	status?:ValueTypes["CrowdfundStatusType"],
+	blockState?:ValueTypes["BlockStateType"],
 	exchangeRate?:boolean,
 	token?:ValueTypes["mirrorERC20Token"],
 	publisher?:ValueTypes["PublisherType"],
@@ -161,6 +161,7 @@ export type ValueTypes = {
 	events?:ValueTypes["EditionEventsType"],
 	tokenIds?:boolean,
 	publisher?:ValueTypes["PublisherType"],
+	blockState?:ValueTypes["BlockStateType"],
 		__typename?: boolean
 }>;
 	/** Edition Attribute type */
@@ -285,7 +286,6 @@ export type ValueTypes = {
 		__typename?: boolean
 }>;
 	["FeatureFlagStatusType"]: AliasType<{
-	isTokenTabEnabled?:boolean,
 	isPluginsTabEnabled?:boolean,
 		__typename?: boolean
 }>;
@@ -297,6 +297,7 @@ export type ValueTypes = {
 	["NavigationSectionType"]: AliasType<{
 	isFundingEnabled?:boolean,
 	isNFTsEnabled?:boolean,
+	isGovernanceEnabled?:boolean,
 		__typename?: boolean
 }>;
 	["NavigationContentType"]: AliasType<{
@@ -304,8 +305,17 @@ export type ValueTypes = {
 	isSplitsEnabled?:boolean,
 	isTokensEnabled?:boolean,
 	isEditionsEnabled?:boolean,
+	isTokenRaceEnabled?:boolean,
+	isAuctionsEnabled?:boolean,
 		__typename?: boolean
 }>;
+	/** Provides information about the state of the block */
+["BlockStateType"]: AliasType<{
+	/** Status of the block */
+	status?:boolean,
+		__typename?: boolean
+}>;
+	["BlockStatusEnum"]:BlockStatusEnum;
 	/** CrowdfundMetadata Type */
 ["CrowdfundMetadataType"]: AliasType<{
 	coverImage?:ValueTypes["MediaAssetType"],
@@ -326,11 +336,6 @@ export type ValueTypes = {
 	description?:boolean,
 	primaryMedia?:ValueTypes["MediaAssetType"],
 	thumbnailMedia?:ValueTypes["MediaAssetType"],
-		__typename?: boolean
-}>;
-	/** CrowdfundStatus Type */
-["CrowdfundStatusType"]: AliasType<{
-	status?:boolean,
 		__typename?: boolean
 }>;
 	/** MirrorERC20Token type */
@@ -538,6 +543,8 @@ mirrorERC20TokenAtAddress?: [{	tokenAddress?:string | null},ValueTypes["mirrorER
 crowdfundTokenApprovalMetadata?: [{	crowdfundAddress?:string | null,	projectAddress?:string | null},ValueTypes["crowdfundTokenApprovalMetadata"]],
 projectFeed?: [{	projectAddress?:string | null},ValueTypes["ProjectType"]],
 plugins?: [{	projectAddress?:string | null},ValueTypes["PluginType"]],
+	/** List of all available plugins */
+	pluginsList?:ValueTypes["PluginType"],
 		__typename?: boolean
 }>;
 	/** ENS type */
@@ -1193,6 +1200,7 @@ plugins?: [{	projectAddress?:string | null},ValueTypes["PluginType"]],
 	key?:boolean,
 	name?:boolean,
 	description?:boolean,
+	category?:boolean,
 	imageURL?:boolean,
 	installed?:boolean,
 		__typename?: boolean
@@ -1552,11 +1560,15 @@ updateProjectTheme?: [{	/** Address of project */
 	key?:string | null,	/** Signature with content */
 	signature?:string | null,	/** Unix Timestamp in seconds */
 	timestamp?:string | null,	colorMode?:ValueTypes["ColorModeType"] | null,	accent?:ValueTypes["AccentType"] | null},ValueTypes["ProjectThemeType"]],
-updatePluginStatus?: [{	/** Address of project */
-	projectAddress?:string | null,	/** Address of user making the request */
-	userAddress?:string | null,	/** Database ID for a plugin record */
+updatePluginStatus?: [{	/** The Ethereum address associated with the user */
+	userAddress?:string | null,	/** The Ethereum address associated with the project */
+	projectAddress?:string | null,	/** Digest */
+	digest?:string | null,	/** Public key used to sign the crowdfund data */
+	key?:string | null,	/** Signature with content related to the crowdfund */
+	signature?:string | null,	/** Unix Timestamp in seconds */
+	timestamp?:string | null,	/** Database ID for a plugin record */
 	pluginId?:number | null,	/** Whether to install or uinstall the plugin */
-	install?:boolean | null},boolean],
+	install?:boolean | null},ValueTypes["PluginType"]],
 		__typename?: boolean
 }>;
 	/** Success type */
@@ -1664,7 +1676,7 @@ export type ModelTypes = {
 	metadata?:ModelTypes["CrowdfundMetadataType"],
 	publishStatus?:string,
 	createdAt?:string,
-	status?:ModelTypes["CrowdfundStatusType"],
+	blockState?:ModelTypes["BlockStateType"],
 	exchangeRate?:string,
 	token?:ModelTypes["mirrorERC20Token"],
 	publisher?:ModelTypes["PublisherType"]
@@ -1770,7 +1782,8 @@ export type ModelTypes = {
 	entry?:ModelTypes["entry"],
 	events?:(ModelTypes["EditionEventsType"] | undefined)[],
 	tokenIds?:(string | undefined)[],
-	publisher?:ModelTypes["PublisherType"]
+	publisher?:ModelTypes["PublisherType"],
+	blockState?:ModelTypes["BlockStateType"]
 };
 	/** Edition Attribute type */
 ["EditionAttribute"]: {
@@ -1881,8 +1894,7 @@ export type ModelTypes = {
 	["AccentType"]: GraphQLTypes["AccentType"];
 	["PostType"]:ModelTypes["entry"] | ModelTypes["crowdfund"];
 	["FeatureFlagStatusType"]: {
-		isTokenTabEnabled?:boolean,
-	isPluginsTabEnabled?:boolean
+		isPluginsTabEnabled?:boolean
 };
 	["NavigationType"]: {
 		section?:ModelTypes["NavigationSectionType"],
@@ -1890,14 +1902,23 @@ export type ModelTypes = {
 };
 	["NavigationSectionType"]: {
 		isFundingEnabled?:boolean,
-	isNFTsEnabled?:boolean
+	isNFTsEnabled?:boolean,
+	isGovernanceEnabled?:boolean
 };
 	["NavigationContentType"]: {
 		isCrowdfundsEnabled?:boolean,
 	isSplitsEnabled?:boolean,
 	isTokensEnabled?:boolean,
-	isEditionsEnabled?:boolean
+	isEditionsEnabled?:boolean,
+	isTokenRaceEnabled?:boolean,
+	isAuctionsEnabled?:boolean
 };
+	/** Provides information about the state of the block */
+["BlockStateType"]: {
+		/** Status of the block */
+	status?:ModelTypes["BlockStatusEnum"]
+};
+	["BlockStatusEnum"]: GraphQLTypes["BlockStatusEnum"];
 	/** CrowdfundMetadata Type */
 ["CrowdfundMetadataType"]: {
 		coverImage?:ModelTypes["MediaAssetType"],
@@ -1916,10 +1937,6 @@ export type ModelTypes = {
 	description?:string,
 	primaryMedia?:ModelTypes["MediaAssetType"],
 	thumbnailMedia?:ModelTypes["MediaAssetType"]
-};
-	/** CrowdfundStatus Type */
-["CrowdfundStatusType"]: {
-		status?:string
 };
 	/** MirrorERC20Token type */
 ["mirrorERC20Token"]: {
@@ -2124,7 +2141,9 @@ export type ModelTypes = {
 	/** Endpoint for querying a project feed by ens name, domain, or address */
 	projectFeed?:ModelTypes["ProjectType"],
 	/** Endpoint for querying all plugins for a project */
-	plugins?:(ModelTypes["PluginType"] | undefined)[]
+	plugins?:(ModelTypes["PluginType"] | undefined)[],
+	/** List of all available plugins */
+	pluginsList?:(ModelTypes["PluginType"] | undefined)[]
 };
 	/** ENS type */
 ["ENS"]: {
@@ -2718,6 +2737,7 @@ export type ModelTypes = {
 	key?:string,
 	name?:string,
 	description?:string,
+	category?:string,
 	imageURL?:string,
 	installed?:boolean
 };
@@ -2846,7 +2866,7 @@ export type ModelTypes = {
 	/** Endpoint for updating a user profile theme */
 	updateProjectTheme?:ModelTypes["ProjectThemeType"],
 	/** Endpoint for updating a plugin's installation status for a project */
-	updatePluginStatus?:boolean
+	updatePluginStatus?:ModelTypes["PluginType"]
 };
 	/** Success type */
 ["success"]: {
@@ -2915,7 +2935,7 @@ export type GraphQLTypes = {
 	metadata?: GraphQLTypes["CrowdfundMetadataType"],
 	publishStatus?: string,
 	createdAt?: string,
-	status?: GraphQLTypes["CrowdfundStatusType"],
+	blockState?: GraphQLTypes["BlockStateType"],
 	exchangeRate?: string,
 	token?: GraphQLTypes["mirrorERC20Token"],
 	publisher?: GraphQLTypes["PublisherType"]
@@ -3030,7 +3050,8 @@ export type GraphQLTypes = {
 	entry?: GraphQLTypes["entry"],
 	events?: Array<GraphQLTypes["EditionEventsType"] | undefined>,
 	tokenIds?: Array<string | undefined>,
-	publisher?: GraphQLTypes["PublisherType"]
+	publisher?: GraphQLTypes["PublisherType"],
+	blockState?: GraphQLTypes["BlockStateType"]
 };
 	/** Edition Attribute type */
 ["EditionAttribute"]: {
@@ -3156,7 +3177,6 @@ export type GraphQLTypes = {
 };
 	["FeatureFlagStatusType"]: {
 	__typename: "FeatureFlagStatusType",
-	isTokenTabEnabled?: boolean,
 	isPluginsTabEnabled?: boolean
 };
 	["NavigationType"]: {
@@ -3167,15 +3187,25 @@ export type GraphQLTypes = {
 	["NavigationSectionType"]: {
 	__typename: "NavigationSectionType",
 	isFundingEnabled?: boolean,
-	isNFTsEnabled?: boolean
+	isNFTsEnabled?: boolean,
+	isGovernanceEnabled?: boolean
 };
 	["NavigationContentType"]: {
 	__typename: "NavigationContentType",
 	isCrowdfundsEnabled?: boolean,
 	isSplitsEnabled?: boolean,
 	isTokensEnabled?: boolean,
-	isEditionsEnabled?: boolean
+	isEditionsEnabled?: boolean,
+	isTokenRaceEnabled?: boolean,
+	isAuctionsEnabled?: boolean
 };
+	/** Provides information about the state of the block */
+["BlockStateType"]: {
+	__typename: "BlockStateType",
+	/** Status of the block */
+	status?: GraphQLTypes["BlockStatusEnum"]
+};
+	["BlockStatusEnum"]: BlockStatusEnum;
 	/** CrowdfundMetadata Type */
 ["CrowdfundMetadataType"]: {
 	__typename: "CrowdfundMetadataType",
@@ -3197,11 +3227,6 @@ export type GraphQLTypes = {
 	description?: string,
 	primaryMedia?: GraphQLTypes["MediaAssetType"],
 	thumbnailMedia?: GraphQLTypes["MediaAssetType"]
-};
-	/** CrowdfundStatus Type */
-["CrowdfundStatusType"]: {
-	__typename: "CrowdfundStatusType",
-	status?: string
 };
 	/** MirrorERC20Token type */
 ["mirrorERC20Token"]: {
@@ -3413,7 +3438,9 @@ export type GraphQLTypes = {
 	/** Endpoint for querying a project feed by ens name, domain, or address */
 	projectFeed?: GraphQLTypes["ProjectType"],
 	/** Endpoint for querying all plugins for a project */
-	plugins?: Array<GraphQLTypes["PluginType"] | undefined>
+	plugins?: Array<GraphQLTypes["PluginType"] | undefined>,
+	/** List of all available plugins */
+	pluginsList?: Array<GraphQLTypes["PluginType"] | undefined>
 };
 	/** ENS type */
 ["ENS"]: {
@@ -4070,6 +4097,7 @@ export type GraphQLTypes = {
 	key?: string,
 	name?: string,
 	description?: string,
+	category?: string,
 	imageURL?: string,
 	installed?: boolean
 };
@@ -4199,7 +4227,7 @@ export type GraphQLTypes = {
 	/** Endpoint for updating a user profile theme */
 	updateProjectTheme?: GraphQLTypes["ProjectThemeType"],
 	/** Endpoint for updating a plugin's installation status for a project */
-	updatePluginStatus?: boolean
+	updatePluginStatus?: GraphQLTypes["PluginType"]
 };
 	/** Success type */
 ["success"]: {
@@ -4280,6 +4308,13 @@ export const enum AccentType {
 	TEAL = "TEAL",
 	YELLOW = "YELLOW",
 	FOREGROUND = "FOREGROUND"
+}
+export const enum BlockStatusEnum {
+	CREATED = "CREATED",
+	CONFIRMED = "CONFIRMED",
+	PENDING = "PENDING",
+	DROPPED = "DROPPED",
+	FAILED = "FAILED"
 }
 export const enum VerificationStatusEnum {
 	EMAIL_NOT_VERIFIED = "EMAIL_NOT_VERIFIED",

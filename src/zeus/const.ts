@@ -3,6 +3,7 @@
 export const AllTypesProps: Record<string,any> = {
 	ColorModeType: "enum",
 	AccentType: "enum",
+	BlockStatusEnum: "enum",
 	query:{
 		publication:{
 			ensLabel:{
@@ -3870,13 +3871,37 @@ export const AllTypesProps: Record<string,any> = {
 			}
 		},
 		updatePluginStatus:{
+			userAddress:{
+				type:"String",
+				array:false,
+				arrayRequired:false,
+				required:false
+			},
 			projectAddress:{
 				type:"String",
 				array:false,
 				arrayRequired:false,
 				required:false
 			},
-			userAddress:{
+			digest:{
+				type:"String",
+				array:false,
+				arrayRequired:false,
+				required:false
+			},
+			key:{
+				type:"String",
+				array:false,
+				arrayRequired:false,
+				required:false
+			},
+			signature:{
+				type:"String",
+				array:false,
+				arrayRequired:false,
+				required:false
+			},
+			timestamp:{
 				type:"String",
 				array:false,
 				arrayRequired:false,
@@ -4136,7 +4161,7 @@ export const ReturnTypes: Record<string,any> = {
 		metadata:"CrowdfundMetadataType",
 		publishStatus:"String",
 		createdAt:"String",
-		status:"CrowdfundStatusType",
+		blockState:"BlockStateType",
 		exchangeRate:"String",
 		token:"mirrorERC20Token",
 		publisher:"PublisherType"
@@ -4238,7 +4263,8 @@ export const ReturnTypes: Record<string,any> = {
 		entry:"entry",
 		events:"EditionEventsType",
 		tokenIds:"String",
-		publisher:"PublisherType"
+		publisher:"PublisherType",
+		blockState:"BlockStateType"
 	},
 	EditionAttribute:{
 		trait_type:"String",
@@ -4340,7 +4366,6 @@ export const ReturnTypes: Record<string,any> = {
 		"...on crowdfund":"crowdfund"
 	},
 	FeatureFlagStatusType:{
-		isTokenTabEnabled:"Boolean",
 		isPluginsTabEnabled:"Boolean"
 	},
 	NavigationType:{
@@ -4349,13 +4374,19 @@ export const ReturnTypes: Record<string,any> = {
 	},
 	NavigationSectionType:{
 		isFundingEnabled:"Boolean",
-		isNFTsEnabled:"Boolean"
+		isNFTsEnabled:"Boolean",
+		isGovernanceEnabled:"Boolean"
 	},
 	NavigationContentType:{
 		isCrowdfundsEnabled:"Boolean",
 		isSplitsEnabled:"Boolean",
 		isTokensEnabled:"Boolean",
-		isEditionsEnabled:"Boolean"
+		isEditionsEnabled:"Boolean",
+		isTokenRaceEnabled:"Boolean",
+		isAuctionsEnabled:"Boolean"
+	},
+	BlockStateType:{
+		status:"BlockStatusEnum"
 	},
 	CrowdfundMetadataType:{
 		coverImage:"MediaAssetType",
@@ -4372,9 +4403,6 @@ export const ReturnTypes: Record<string,any> = {
 		description:"String",
 		primaryMedia:"MediaAssetType",
 		thumbnailMedia:"MediaAssetType"
-	},
-	CrowdfundStatusType:{
-		status:"String"
 	},
 	mirrorERC20Token:{
 		id:"Int",
@@ -4534,7 +4562,8 @@ export const ReturnTypes: Record<string,any> = {
 		mirrorERC20TokenAtAddress:"mirrorERC20Token",
 		crowdfundTokenApprovalMetadata:"crowdfundTokenApprovalMetadata",
 		projectFeed:"ProjectType",
-		plugins:"PluginType"
+		plugins:"PluginType",
+		pluginsList:"PluginType"
 	},
 	ENS:{
 		name:"String",
@@ -5086,6 +5115,7 @@ export const ReturnTypes: Record<string,any> = {
 		key:"String",
 		name:"String",
 		description:"String",
+		category:"String",
 		imageURL:"String",
 		installed:"Boolean"
 	},
@@ -5154,7 +5184,7 @@ export const ReturnTypes: Record<string,any> = {
 		updateProject:"ProjectType",
 		setProjectHeaderImage:"MediaAssetType",
 		updateProjectTheme:"ProjectThemeType",
-		updatePluginStatus:"Boolean"
+		updatePluginStatus:"PluginType"
 	},
 	success:{
 		success:"Boolean"

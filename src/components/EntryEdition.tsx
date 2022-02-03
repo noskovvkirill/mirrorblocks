@@ -1,10 +1,11 @@
 import thunder from '../fetcher'
 import useSWR from 'swr'
-import { Box, Skeleton, IconNFT, SkeletonGroup, Stat, Tag, Card, Text, IconCheck, Stack, Avatar } from 'degen'
+import { Box, Skeleton, IconNFT, SkeletonGroup, Stat, Tag, Card, Text, Stack, Avatar } from 'degen'
 import AddressPrettyPrint from '../helpers/AddressPrettyPrint'
 import { render } from '../helpers/MarkdownSimpleParser'
-
 import Root from './Root'
+import type { BoxMaxWidth } from '../components/Root'
+
 
 
 
@@ -65,11 +66,10 @@ const fetcher = (digest: string) => {
 
 
 
-const EntryEdition = ({ digest, maxWidth }: { digest: string, maxWidth?: string }) => {
+const EntryEdition = ({ digest, maxWidth }: { digest: string, maxWidth?: BoxMaxWidth }) => {
     const { data, error, isValidating } = useSWR(digest, fetcher, {
         revalidateOnFocus: false
     });
-
 
     return (
         <Root maxWidth={maxWidth}>
@@ -77,14 +77,16 @@ const EntryEdition = ({ digest, maxWidth }: { digest: string, maxWidth?: string 
                 position="relative"
                 borderRadius={"3xLarge"}
                 width="full" flexDirection="column" gap="4" backgroundColor={"background"}>
-                <a style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
-                    href={
-                        data?.entry?.publisher?.project?.domain
-                            ? 'https://' + data?.entry?.publisher?.project?.domain + '/edition/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionContractAddress) + '/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionId)
-                            : 'https://' + 'mirror.xyz/' + data?.entry?.publisher?.member?.ens + '/edition/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionContractAddress) + '/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionId)
-                    }
-                    target={"_blank"}
-                />
+                {!isValidating && !error && (
+                    <a style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
+                        href={
+                            data?.entry?.publisher?.project?.domain
+                                ? 'https://' + data?.entry?.publisher?.project?.domain + '/edition/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionContractAddress) + '/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionId)
+                                : 'https://' + 'mirror.xyz/' + data?.entry?.publisher?.member?.ens + '/edition/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionContractAddress) + '/' + (data?.entry?.editions && data?.entry?.editions[0]?.editionId)
+                        }
+                        target={"_blank"}
+                    />
+                )}
 
                 <Box
                     aspectRatio="2/1"
@@ -100,6 +102,7 @@ const EntryEdition = ({ digest, maxWidth }: { digest: string, maxWidth?: string 
                             {data?.entry?.featuredImage?.mimetype === 'video/mp4'
                                 ? <video
                                     loop
+                                    aria-label={"edition cover" + data?.entry?.title}
                                     playsInline
                                     preload="none"
                                     poster={data?.entry.featuredImage?.url}
@@ -108,7 +111,8 @@ const EntryEdition = ({ digest, maxWidth }: { digest: string, maxWidth?: string 
                                     src={data?.entry?.featuredImage?.url}
                                 />
                                 : <img
-                                    alt={'edition' + data?.entry?.title}
+                                    loading="lazy"
+                                    alt={'edition cover' + data?.entry?.title}
                                     style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                                     src={data?.entry?.featuredImage?.url} />
                             }

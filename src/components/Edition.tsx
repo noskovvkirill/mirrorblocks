@@ -3,6 +3,7 @@ import useSWR from 'swr'
 import { Box, Skeleton, IconNFT, SkeletonGroup, Stat, Tag, Text, Stack, Avatar } from 'degen'
 import AddressPrettyPrint from '../helpers/AddressPrettyPrint'
 import Root from './Root'
+import type { BoxMaxWidth } from '../components/Root'
 
 const fetcher = (contract: string, id: number) => {
     return thunder('query')({
@@ -53,7 +54,7 @@ const fetcher = (contract: string, id: number) => {
 
 
 
-const Edition = ({ id = 1, contract, maxWidth }: { id: number, contract: string, maxWidth?: string }) => {
+const Edition = ({ id, contract, maxWidth }: { id: number, contract: string, maxWidth?: BoxMaxWidth }) => {
     const { data, error, isValidating } = useSWR([contract, id], fetcher, {
         revalidateOnFocus: false
     });
@@ -64,14 +65,16 @@ const Edition = ({ id = 1, contract, maxWidth }: { id: number, contract: string,
                 position="relative"
                 borderRadius={"3xLarge"}
                 width="full" flexDirection="column" gap="4" backgroundColor={"background"}>
-                <a style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
-                    href={
-                        data?.edition?.publisher?.project?.domain
-                            ? 'https://' + data?.edition?.publisher?.project?.domain + '/edition/' + contract + '/' + id.toString()
-                            : 'https://' + 'mirror.xyz/' + data?.edition?.publisher?.member?.ens + '/edition/' + contract + '/' + id.toString()
-                    }
-                    target={"_blank"}
-                />
+                {!isValidating && !error && (
+                    <a style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
+                        href={
+                            data?.edition?.publisher?.project?.domain
+                                ? 'https://' + data?.edition?.publisher?.project?.domain + '/edition/' + contract + '/' + id.toString()
+                                : 'https://' + 'mirror.xyz/' + data?.edition?.publisher?.member?.ens + '/edition/' + contract + '/' + id.toString()
+                        }
+                        target={"_blank"}
+                    />
+                )}
 
                 <Box
                     aspectRatio="1/1"

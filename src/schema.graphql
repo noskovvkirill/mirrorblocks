@@ -43,7 +43,7 @@ type crowdfund {
   metadata: CrowdfundMetadataType
   publishStatus: String
   createdAt: String
-  status: CrowdfundStatusType
+  blockState: BlockStateType
   exchangeRate: String
   token: mirrorERC20Token
   publisher: PublisherType
@@ -159,6 +159,7 @@ type edition {
   events: [EditionEventsType]
   tokenIds: [String]
   publisher: PublisherType
+  blockState: BlockStateType
 }
 
 """Edition Attribute type"""
@@ -298,7 +299,6 @@ enum AccentType {
 union PostType = entry | crowdfund
 
 type FeatureFlagStatusType {
-  isTokenTabEnabled: Boolean
   isPluginsTabEnabled: Boolean
 }
 
@@ -310,6 +310,7 @@ type NavigationType {
 type NavigationSectionType {
   isFundingEnabled: Boolean
   isNFTsEnabled: Boolean
+  isGovernanceEnabled: Boolean
 }
 
 type NavigationContentType {
@@ -317,6 +318,22 @@ type NavigationContentType {
   isSplitsEnabled: Boolean
   isTokensEnabled: Boolean
   isEditionsEnabled: Boolean
+  isTokenRaceEnabled: Boolean
+  isAuctionsEnabled: Boolean
+}
+
+"""Provides information about the state of the block"""
+type BlockStateType {
+  """Status of the block"""
+  status: BlockStatusEnum
+}
+
+enum BlockStatusEnum {
+  CREATED
+  CONFIRMED
+  PENDING
+  DROPPED
+  FAILED
 }
 
 """CrowdfundMetadata Type"""
@@ -339,11 +356,6 @@ type PodiumFieldType {
   description: String
   primaryMedia: MediaAssetType
   thumbnailMedia: MediaAssetType
-}
-
-"""CrowdfundStatus Type"""
-type CrowdfundStatusType {
-  status: String
 }
 
 """MirrorERC20Token type"""
@@ -646,7 +658,6 @@ type query {
   ): MirrorPollType
   mirrorPollCanRespond(
     """Database ID of poll"""
-  
     pollId: Int
 
     """User address"""
@@ -684,6 +695,9 @@ type query {
 
   """Endpoint for querying all plugins for a project"""
   plugins(projectAddress: String): [PluginType]
+
+  """List of all available plugins"""
+  pluginsList: [PluginType]
 }
 
 """ENS type"""
@@ -1356,6 +1370,7 @@ type PluginType {
   key: String
   name: String
   description: String
+  category: String
   imageURL: String
   installed: Boolean
 }
@@ -2541,18 +2556,30 @@ type mutations {
 
   """Endpoint for updating a plugin's installation status for a project"""
   updatePluginStatus(
-    """Address of project"""
+    """The Ethereum address associated with the user"""
+    userAddress: String
+
+    """The Ethereum address associated with the project"""
     projectAddress: String
 
-    """Address of user making the request"""
-    userAddress: String
+    """Digest"""
+    digest: String
+
+    """Public key used to sign the crowdfund data"""
+    key: String
+
+    """Signature with content related to the crowdfund"""
+    signature: String
+
+    """Unix Timestamp in seconds"""
+    timestamp: String
 
     """Database ID for a plugin record"""
     pluginId: Int
 
     """Whether to install or uinstall the plugin"""
     install: Boolean
-  ): Boolean
+  ): PluginType
 }
 
 """Success type"""

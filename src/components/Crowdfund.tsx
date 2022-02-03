@@ -5,6 +5,22 @@ import AddressPrettyPrint from '../helpers/AddressPrettyPrint'
 import { render } from '../helpers/MarkdownSimpleParser'
 import { clamp } from '../helpers/Math'
 import Root from '../components/Root'
+import type { BoxMaxWidth } from '../components/Root'
+
+
+
+//TODO: 
+// ANIMATE PROGRESS BAR
+
+
+// import { keyframes } from '@vanilla-extract/css'
+
+// const shake = keyframes({
+//     '0%': { transform: 'translateX(5%)' },
+//     '100%': { transform: 'translateX(-5%)' },
+// })
+
+
 
 const fetcher = (address: string) => {
     return thunder('query')({
@@ -67,7 +83,7 @@ const fetcher = (address: string) => {
 
 
 
-const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', maxWidth = '36rem' }: { address: string, maxWidth?: string }) => {
+const Crowdfund = ({ address, maxWidth }: { address: string, maxWidth?: BoxMaxWidth }) => {
     const { data, error, isValidating } = useSWR(address, fetcher, {
         revalidateOnFocus: false
     });
@@ -79,16 +95,18 @@ const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', max
             <Box display="flex"
                 position={"relative"}
                 borderRadius={"3xLarge"}
-                width="full" flexDirection="column" style={{ maxWidth: maxWidth }} gap="4" backgroundColor={"background"}>
-                <a
-                    style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
-                    href={
-                        data?.crowdfundAtAddress?.publisher?.project?.domain
-                            ? 'https://' + data?.crowdfundAtAddress?.publisher?.project?.domain + '/crowdfunds/' + address
-                            : 'https://' + 'mirror.xyz/' + data?.crowdfundAtAddress?.publisher?.member?.ens + '/crowdfunds/' + address
-                    }
-                    target={"_blank"}
-                />
+                width="full" flexDirection="column" maxWidth={maxWidth} gap="4" backgroundColor={"background"}>
+                {!isValidating && !error && (
+                    <a
+                        style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' }}
+                        href={
+                            data?.crowdfundAtAddress?.publisher?.project?.domain
+                                ? 'https://' + data?.crowdfundAtAddress?.publisher?.project?.domain + '/crowdfunds/' + address
+                                : 'https://' + 'mirror.xyz/' + data?.crowdfundAtAddress?.publisher?.member?.ens + '/crowdfunds/' + address
+                        }
+                        target={"_blank"}
+                    />
+                )}
                 <Box
                     aspectRatio="2/1"
                     overflow='hidden'
@@ -98,11 +116,13 @@ const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', max
                     borderTopLeftRadius="3xLarge"
                     borderTopRightRadius={"3xLarge"}
                     position={"relative"}>
-                    <Skeleton loading={isValidating || error}>
+                    {!isValidating && !error && (
                         <img
+                            loading="lazy"
+                            alt={'crowdfund cover' + data?.crowdfundAtAddress?.name}
                             style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                             src={data?.crowdfundAtAddress?.metadata?.coverImage?.url} />
-                    </Skeleton>
+                    )}
                 </Box>
                 <Box width="full" paddingTop={"3"} paddingBottom={"6"} display="flex" style={{ flex: '1 1' }}
                     flexDirection="column" justifyContent={"space-between"}>
@@ -131,7 +151,8 @@ const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', max
                         flexDirection={"column"}
                         marginTop="auto"
                         gap={"6"}
-                        height="full" paddingTop={"6"} paddingLeft={"6"} paddingRight={"6"}>
+                        height="full"
+                        paddingTop={"6"} paddingLeft={"6"} paddingRight={"6"}>
 
                         <Box width="full" height="4" backgroundColor={"backgroundSecondary"} borderRadius={"full"} overflow='hidden'>
                             {data?.crowdfundBlockData?.valueCurrent && data?.crowdfundAtAddress?.goal && (
@@ -139,7 +160,10 @@ const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', max
                                     height={"full"}
                                     // @ts-ignore
                                     backgroundColor={clamp(Number(data?.crowdfundBlockData?.valueCurrent) / Number(data?.crowdfundAtAddress?.goal) * 100, 0, 100) >= 100 ? 'green' : data?.crowdfundAtAddress?.publisher?.project?.theme?.accent?.toLowerCase() || "green"}
-                                    style={{ width: clamp(Number(data?.crowdfundBlockData?.valueCurrent) / Number(data?.crowdfundAtAddress?.goal) * 100, 0, 100) + '%' }}></Box>
+                                    style={{
+                                        // animation: `1.4s linear infinite ${shake}`,
+                                        width: clamp(Number(data?.crowdfundBlockData?.valueCurrent) / Number(data?.crowdfundAtAddress?.goal) * 100, 0, 100) + '%'
+                                    }}></Box>
                             )}
                         </Box>
 
@@ -152,14 +176,14 @@ const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', max
                                     <Stat
                                         size='small'
                                         label="FUNDING GOAL"
-                                        value={data?.crowdfundAtAddress?.goal + "ETH"}
+                                        value={data?.crowdfundAtAddress?.goal + " ETH"}
                                     />
                                 </Skeleton>
                                 <Skeleton>
                                     <Stat
                                         size='small'
                                         label="FUNDS RAISED"
-                                        value={data?.crowdfundBlockData?.valueCurrent + "ETH"}
+                                        value={data?.crowdfundBlockData?.valueCurrent + " ETH"}
                                     />
                                 </Skeleton>
                             </Stack>
@@ -198,8 +222,7 @@ const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', max
 
 
                             <Skeleton loading={isValidating || error}>
-                                {((data?.crowdfundBlockData?.valueCurrent || 0) >= (data?.crowdfundAtAddress?.goal || 0)) && (
-
+                                {(data?.crowdfundBlockData?.valueCurrent && data?.crowdfundAtAddress?.goal && (parseFloat(data.crowdfundBlockData?.valueCurrent)) >= (parseFloat(data.crowdfundAtAddress.goal))) && (
                                     <Button
                                         onClick={() => {
                                             data?.crowdfundAtAddress?.publisher?.project?.domain
@@ -216,8 +239,7 @@ const Crowdfund = ({ address = '0xCCac1187F4439E6ff02De97B16fF40BD2E7c8080', max
                                     </Button>
 
                                 )}
-                                {((data?.crowdfundBlockData?.valueCurrent || 0) < (data?.crowdfundAtAddress?.goal || 0)) && (
-
+                                {data?.crowdfundBlockData?.valueCurrent && data?.crowdfundAtAddress?.goal && parseFloat(data.crowdfundBlockData.valueCurrent) < parseFloat(data.crowdfundAtAddress.goal) && (
                                     <Button
                                         onClick={() => {
                                             data?.crowdfundAtAddress?.publisher?.project?.domain
