@@ -1,6 +1,7 @@
 ## Styled components for Mirror.xyz 
 Building blocks for Mirror.xyz to render web3 content in your React app. 
-Styled with [Mirror Degen](https://github.com/mirror-xyz/degen)
+Styled with [Mirror Degen](https://github.com/mirror-xyz/degen).
+
 Renders:
 - Entries 
 - Crowdfunds
@@ -10,6 +11,8 @@ Renders:
 - ... more to come 
 
 ### Usage 
+___
+
 1. Install  .
    ```
     npm install mirrorblocks 
@@ -35,8 +38,8 @@ Renders:
    const MyPage = () => (
       <main>
          <Poll digest={"18"} />
-         <Crowdfund maxWidth={"64"} address={"0x18f623e397EF28F1A5a094840f7F6f5587828b94"} />
-         <Edition contract={'0xDF5b5ee15CC96ba7d0CB6BD9b2c0fc4417ab6445'} id={453} maxWidth={'24rem'}/>
+         <Crowdfund maxWidth={"64rem"} address={"0x18f623e397EF28F1A5a094840f7F6f5587828b94"} />
+         <Edition contract={'0xDF5b5ee15CC96ba7d0CB6BD9b2c0fc4417ab6445'} id={453} maxWidth={"24rem"}/>
          <EntryEdition digest={"sfgXhqtwwMkhHLnAM1jVr16MdSJ4RGSb1Y6CAKpslgc"} />
       </main>
    )
@@ -45,6 +48,8 @@ Renders:
    ```
 
 ### License
+___
+
 MIT.
 
 If you have any optimizations ideas or improvements feel free to contribute :) 
