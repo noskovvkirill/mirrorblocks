@@ -1,10 +1,9 @@
 {
   "name": "mirrorblocks",
-  "version": "0.0.1",
+  "version": "0.0.11",
   "description": "Mirror.xyz components to render web3 blocks",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
-  "typings": "dist/index.d.ts",
   "author": "Kirill Noskov",
   "license": "MIT",
   "devDependencies": {
