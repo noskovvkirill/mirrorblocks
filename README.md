@@ -1,3 +1,6 @@
+![cover](https://user-images.githubusercontent.com/50060130/152374346-7228a4d4-4da1-43fd-a76c-766ba73712ea.png)
+
+
 ## Styled components for Mirror.xyz 
 Building blocks for Mirror.xyz to render web3 content in your React app. 
 Styled with [Mirror Degen](https://github.com/mirror-xyz/degen).
